@@ -6,6 +6,7 @@ import {
   FiMessageSquare,
   FiTrendingUp,
   FiShield,
+  FiShoppingBag,
 } from "react-icons/fi";
 const projects = [
   {
@@ -20,7 +21,7 @@ const projects = [
     tags: ["React", "Express", "Gemini", "Tavily", "SQLite"],
     detail:
       "Google OAuth 2.0 and Express sessions connect each learner to saved stories, playlists, streaks, and preferences. A personal dashboard and research explorer make learning easier to follow.",
-    href: "https://unboxingai.onrender.com",
+    href: "https://unboxingai.onrender.com/",
     note: "PERSONALIZED AI LEARNING",
   },
   {
@@ -65,6 +66,22 @@ const projects = [
     detail:
       "Built and evaluated regression models on structured insurance data, achieving an R² of 0.83. The API and dashboard bring predictions into an interactive application.",
     note: "R² 0.83 · REGRESSION",
+  },
+  {
+    id: "05",
+    title: "Sonik — Smart Retail Management",
+    subtitle: "A connected workspace for everyday retail operations.",
+    category: "Full-Stack",
+    kind: "retail",
+    Icon: FiShoppingBag,
+    description:
+      "A team-built full-stack retail management app for small stores and supermarkets. Connects POS billing, inventory, customer credit, supplier workflows, and financial reporting in one workspace.",
+    tags: ["Vue 3", "Vite", "FastAPI", "SQLAlchemy", "SQLite", "Chart.js"],
+    detail:
+      "A Vue 3 frontend with Pinia and Vue Router connects to a FastAPI backend. Features include stock, expiry and damage tracking, milk subscriptions, employee shifts, ML-based insights, and Razorpay integration. An optional Groq-powered AI assistant uses the shared store database to answer business questions. Developed as a collaborative software engineering course project.",
+    href: "https://retaildelhi.netlify.app/",
+    source: "https://github.com/23f2004126/Software_Engineering_Project",
+    note: "FULL-STACK RETAIL OPERATIONS",
   },
 ];
 function ProjectArt({ project }) {
@@ -150,6 +167,26 @@ function ProjectArt({ project }) {
           </div>
         </div>
       )}
+      {project.kind === "retail" && (
+        <div className="retail-art">
+          <div className="retail-art-heading">
+            <Icon />
+            <div>
+              <strong>Sonik</strong>
+              <span>SMART RETAIL MANAGEMENT</span>
+            </div>
+          </div>
+          <div className="retail-modules">
+            <span>POS billing</span>
+            <span>Inventory</span>
+            <span>Business insights</span>
+            <span>AI assistant</span>
+          </div>
+          <div className="retail-stack">
+            Vue 3 <FiArrowRight /> FastAPI <FiArrowRight /> Store data
+          </div>
+        </div>
+      )}
       <span className="art-label">{project.note}</span>
     </div>
   );
@@ -173,24 +210,27 @@ export default function Projects() {
           </div>
           <p>
             A selection of projects across applied AI,
-            <br className="desktop-break" /> language models, and predictive
-            systems.
+            <br className="desktop-break" /> predictive systems, and full-stack
+            development.
           </p>
         </div>
         <div className="project-toolbar">
           <div className="filters" role="group" aria-label="Filter projects">
-            {["All projects", "Generative AI", "Machine Learning"].map(
-              (label) => (
-                <button
-                  key={label}
-                  className={filter === label ? "filter active" : "filter"}
-                  aria-pressed={filter === label}
-                  onClick={() => setFilter(label)}
-                >
-                  {label}
-                </button>
-              ),
-            )}
+            {[
+              "All projects",
+              "Generative AI",
+              "Machine Learning",
+              "Full-Stack",
+            ].map((label) => (
+              <button
+                key={label}
+                className={filter === label ? "filter active" : "filter"}
+                aria-pressed={filter === label}
+                onClick={() => setFilter(label)}
+              >
+                {label}
+              </button>
+            ))}
           </div>
           <span className="project-count" aria-live="polite">
             {String(visible.length).padStart(2, "0")} PROJECTS
@@ -198,7 +238,10 @@ export default function Projects() {
         </div>
         <div className="project-grid">
           {visible.map((project) => (
-            <article className="project-card" key={project.id}>
+            <article
+              className={`project-card${project.kind === "retail" ? " project-featured" : ""}`}
+              key={project.id}
+            >
               <ProjectArt project={project} />
               <div className="project-content">
                 <div className="project-meta">
@@ -231,6 +274,16 @@ export default function Projects() {
                     </a>
                   )}
                 </div>
+                {project.source && (
+                  <a
+                    className="text-link project-source-link"
+                    href={project.source}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    View source on GitHub <FiArrowUpRight />
+                  </a>
+                )}
               </div>
             </article>
           ))}
