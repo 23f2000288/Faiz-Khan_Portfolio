@@ -6,7 +6,7 @@ import {
   FiMail,
   FiPhone,
 } from "react-icons/fi";
-const email = "23f2000288@ds.study.iitm.ac.in";
+const email = "faizkhansmt8298@gmail.com";
 export default function Contact() {
   const [status, setStatus] = useState("idle");
   const [copied, setCopied] = useState(false);

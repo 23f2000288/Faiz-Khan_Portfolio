@@ -84,6 +84,11 @@ const groups = [
     Icon: FiDatabase,
     items: ["Docker", "Git / GitHub", "Linux", "MySQL", "PostgreSQL", "SQLite"],
   },
+  {
+    title: "Cloud & Deployment",
+    Icon: FiCloud,
+    items: ["GCP", "AWS", "Cloud deployments", "MLOps", "DevOps"],
+  },
 ];
 export default function Skills() {
   return (
