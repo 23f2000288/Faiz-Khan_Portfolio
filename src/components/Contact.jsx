@@ -1,93 +1,153 @@
-import axios from "axios";
-import React from "react";
-import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
-
-function Contact() {
-  const {
-    register,
-    handleSubmit,
-
-    formState: { errors },
-  } = useForm();
-
-  const onSubmit = async (data) => {
-    const userInfo = {
-      name: data.name,
-      email: data.email,
-      message: data.message,
-    };
+import { useState } from "react";
+import {
+  FiArrowUpRight,
+  FiCheck,
+  FiCopy,
+  FiMail,
+  FiPhone,
+} from "react-icons/fi";
+const email = "23f2000288@ds.study.iitm.ac.in";
+export default function Contact() {
+  const [status, setStatus] = useState("idle");
+  const [copied, setCopied] = useState(false);
+  async function copyEmail() {
     try {
-      await axios.post("https://getform.io/f/awnygxqb", userInfo);
-      toast.success("Your message has been sent");
-    } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong");
+      await navigator.clipboard.writeText(email);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2500);
+    } catch {
+      setCopied(false);
     }
-  };
+  }
+  async function submit(event) {
+    event.preventDefault();
+    if (status === "sending") return;
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    setStatus("sending");
+    try {
+      const response = await fetch("https://getform.io/f/awnygxqb", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(Object.fromEntries(data)),
+      });
+      if (!response.ok) throw new Error("Message delivery failed");
+      setStatus("sent");
+      form.reset();
+    } catch {
+      setStatus("error");
+    }
+  }
   return (
-    <>
-      <div
-        name="Contact"
-        className="max-w-screen-2xl container mx-auto px-4 md:px-20 my-16"
-      >
-        <h1 className="text-3xl font-bold mb-4">Contact Me</h1>
-        <span className="text-gray-600">Fill out the form below to get in touch.</span>
-
-        <div className=" flex flex-col items-center justify-center mt-5">
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-           
-            className="bg-slate-200 w-96 px-8 py-6 rounded-xl"
-          >
-            <h1 className="text-xl font-semibold mb-4">Send Your Message</h1>
-            <div className="flex flex-col mb-4">
-              <label className="block text-gray-700">FullName</label>
+    <section id="contact" className="section contact-section">
+      <div className="container contact-grid">
+        <div className="contact-copy">
+          <p className="eyebrow">04 / LET’S CONNECT</p>
+          <h2>
+            Have a problem
+            <br />
+            worth <span>solving?</span>
+          </h2>
+          <p>
+            I’d love to hear about AI/ML opportunities, research, or an
+            interesting project. Let’s build something useful together.
+          </p>
+          <div className="contact-email">
+            <FiMail />
+            <a href={`mailto:${email}`}>{email}</a>
+            <button
+              aria-label={copied ? "Email copied" : "Copy email address"}
+              onClick={copyEmail}
+            >
+              {copied ? <FiCheck /> : <FiCopy />}
+            </button>
+          </div>
+          <span className="copy-status" role="status">
+            {copied ? "Email copied to clipboard." : ""}
+          </span>
+          <a className="phone-link" href="tel:+919572030969">
+            <FiPhone /> +91 95720 30969
+          </a>
+          <div className="contact-social">
+            <a
+              href="https://github.com/23f2000288"
+              target="_blank"
+              rel="noreferrer"
+            >
+              GitHub <FiArrowUpRight />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/md-faiz-khan-21a89334b"
+              target="_blank"
+              rel="noreferrer"
+            >
+              LinkedIn <FiArrowUpRight />
+            </a>
+          </div>
+        </div>
+        <form className="contact-form" onSubmit={submit}>
+          <h3>Say hello.</h3>
+          <div className="form-row">
+            <div>
+              <label htmlFor="name">Your name</label>
               <input
-                {...register("name", { required: true })}
-                className="shadow rounded-lg appearance-none border  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="name"
                 name="name"
-                type="text"
-                placeholder="Enter your fullname"
+                placeholder="Full name"
+                autoComplete="name"
+                required
+                maxLength={120}
+                disabled={status === "sending"}
               />
-              {errors.name && <span>This field is required</span>}
             </div>
-            <div className="flex flex-col mb-4">
-              <label className="block text-gray-700">Email Address</label>
+            <div>
+              <label htmlFor="email">Email address</label>
               <input
-                {...register("email", { required: true })}
-                className="shadow rounded-lg appearance-none border  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="email"
                 name="email"
-                type="text"
-                placeholder="Enter your email address"
+                type="email"
+                placeholder="you@example.com"
+                autoComplete="email"
+                required
+                maxLength={254}
+                disabled={status === "sending"}
               />
-              {errors.email && <span>This field is required</span>}
             </div>
-            <div className="flex flex-col mb-4">
-              <label className="block text-gray-700">Message</label>
-              <textarea
-                {...register("message", { required: true })}
-                className="shadow rounded-lg appearance-none border  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="message"
-                name="message"
-                type="text"
-                placeholder="Enter your Query"
-              />
-              {errors.message && <span>This field is required</span>}
-            </div>
-            <button
-              type="submit"
-              className="bg-black text-white rounded-xl px-3 py-2 hover:bg-slate-700 duration-300"
-            >
-              Send
-            </button>
-          </form>
-        </div>
+          </div>
+          <label htmlFor="message">What’s on your mind?</label>
+          <textarea
+            id="message"
+            name="message"
+            placeholder="Tell me a little about your idea or opportunity…"
+            rows={4}
+            required
+            maxLength={5000}
+            disabled={status === "sending"}
+          />
+          <button
+            className="button button-lime"
+            type="submit"
+            disabled={status === "sending"}
+          >
+            {status === "sending" ? "Sending…" : "Send message"}
+            <FiArrowUpRight />
+          </button>
+          <p
+            className={`form-status ${status}`}
+            role="status"
+            aria-live="polite"
+          >
+            {status === "sent"
+              ? "Thanks! Your message has been sent."
+              : status === "error"
+                ? "Your message could not be sent. Please try again or email me directly."
+                : "You can also reach me directly by email."}
+          </p>
+        </form>
       </div>
-    </>
+    </section>
   );
 }
-
-export default Contact;
